@@ -1,0 +1,54 @@
+
+
+# Valida si el archivo existe.
+if(!file.exists('FileHW1.zip')){
+  download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip",destfile = "FileHW1.zip")
+}
+
+# Extracción del Archivo
+unzip("FileHW1.zip")
+
+#Carga de datos
+datos<-read.table("household_power_consumption.txt",header = TRUE, sep= ";")
+names(datos)
+
+# Restricción de datos
+fecha1=c("2/2/2007")
+fecha2=c("1/2/2007")
+registros<-which(datos$Date==fecha1 | datos$Date==fecha2)
+dproc<-datos[registros,]
+dproc$Tiempo<-paste(dproc$Date, dproc$Time)
+dproc$Tiempo<-strptime(dproc$Tiempo, "%d/%m/%Y %H:%M:%S")
+
+#Gráfica 4
+datpl41<-as.numeric(as.character(dproc$Global_active_power))
+datpl42<-as.numeric(as.character(dproc$Voltage))
+datpl43<-as.numeric(as.character(dproc$Sub_metering_1))
+datpl44<-as.numeric(as.character(dproc$Sub_metering_2))
+datpl45<-as.numeric(as.character(dproc$Sub_metering_3))
+datpl46<-as.numeric(as.character(dproc$Global_reactive_power))
+
+#Generar el Gráfico
+par(mfrow=c(2,2))
+
+plot(dproc$Tiempo, datpl41, type='l',ylab="Global Active Power", xlab="")
+
+plot(dproc$Tiempo, datpl42, type='l',ylab="Voltage", xlab="datetime")
+
+plot(dproc$Tiempo, datpl43, type='l',ylab="Energy sub metering", xlab="",col="black")
+lines(dproc$Tiempo, datpl44,type='l', col='red')
+lines(dproc$Tiempo, datpl45,type='l', col='blue')
+legend('topright', c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), lty=c(1,1,1), col=c("black","red","blue"))
+
+plot(dproc$Tiempo, datpl46, type='l',ylab="Global_reactive_power", xlab="datetime")
+
+
+# Guardar la imagen como .PNG 
+dev.copy(png,file="plot4.png", width = 480, height = 480, units = "px")
+dev.off()
+
+
+
+
+
+
